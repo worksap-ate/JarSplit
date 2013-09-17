@@ -90,7 +90,7 @@ public class MyClassVisitor extends ClassVisitor {
 		
 		return new MyMethodVisitor(this.api, this.db);
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		MyDB db = new MyDB();
 		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
@@ -106,7 +106,8 @@ public class MyClassVisitor extends ClassVisitor {
                 cr.accept(cv, 0);
             }
         }
-        f.close();
-        System.out.println(db.toString());
+        f.close();        
+        split.Spliter spliter = new split.Spliter();
+        spliter.start(db.getDependency());
 	}
 }

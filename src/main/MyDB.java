@@ -1,7 +1,9 @@
 package main;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
@@ -25,6 +27,9 @@ public class MyDB {
 	
 	public void add(String depend){
 		depend = convert(depend);
+		if(depend.equals(current)){
+			return;
+		}
 		L.debug("MyDB.add:depend: " + current + " -> " + depend);
 		Map<String, Integer> temp = this.dependency.get(this.current);
 		if(!temp.containsKey(depend)){
@@ -84,6 +89,29 @@ public class MyDB {
 	}
    
 	public String toString(){
-		return this.dependency.toString();
+		StringBuilder sb = new StringBuilder();
+		for(Map.Entry<String, Map<String, Integer>> e : this.dependency.entrySet()){
+			String key = e.getKey();
+			Map<String, Integer> value = e.getValue();
+			sb.append(key + " = {");
+			for(Map.Entry<String, Integer> e2 : value.entrySet()){
+				sb.append(e2.getKey() + ", ");
+			}
+			sb.append("}\n");
+		}
+		return sb.toString();
+	}
+	
+
+	public Map<String, Set<String>> getDependency(){
+		Map<String, Set<String>> ret = new HashMap<String, Set<String>>();
+		for(Map.Entry<String, Map<String, Integer>> entry : this.dependency.entrySet()){
+			Set<String> temp = new HashSet<String>();
+			for(String t : entry.getValue().keySet()){
+				temp.add(t);
+			}
+			ret.put(entry.getKey(), temp);
+		}
+		return ret;
 	}
 }
