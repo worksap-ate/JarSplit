@@ -2,6 +2,7 @@ package main;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.objectweb.asm.ClassReader;
@@ -95,28 +96,5 @@ public class MyClassVisitor extends ClassVisitor {
 		}
 		
 		return new MyMethodVisitor(this.api, this.db);
-	}
-
-	public static void main(String[] args) throws IOException {
-		MyDB db = new MyDB();
-		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
-        String jarName = "/home/USERNAME/Downloads/cfm.jar";
-        // jarName = "/home/USERNAME/Desktop/samplejar.jar";
-        // jarName = "/home/USERNAME/Desktop/loopsamplejar.jar";
-        ZipFile f = new ZipFile(jarName);
-        Enumeration<? extends ZipEntry> en = f.entries();
-        while(en.hasMoreElements()) {
-            ZipEntry e = en.nextElement();
-            String name = e.getName();
-            if(name.endsWith(".class")) {
-                ClassReader cr = new ClassReader(f.getInputStream(e));
-                cr.accept(cv, 0);
-            }
-        }
-        f.close();
-        
-        //System.out.println(Spliter.toString(db.getSuper2Subs()));
-        split.Spliter spliter = new split.Spliter();
-        spliter.start2(db.getDependency(), db.getSuper2Subs());
 	}
 }

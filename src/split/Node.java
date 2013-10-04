@@ -10,9 +10,9 @@ public class Node {
 	private String data;
 	private List<Node> children;
 	
-	public boolean visitting;
-	public Set<Node> dependency;
-	public Set<Node> todo_notify;
+	// public boolean visitting;
+	// public Set<Node> dependency;
+	// public Set<Node> todo_notify;
 
 	public int hashCode(){
         return data.hashCode();
@@ -25,9 +25,9 @@ public class Node {
 		this.data = data;
 		this.children = new ArrayList<Node>();
 		
-		this.visitting = false;
-		this.dependency = new HashSet<Node>();
-		this.todo_notify = new HashSet<Node>();
+		// this.visitting = false;
+		// this.dependency = new HashSet<Node>();
+		// this.todo_notify = new HashSet<Node>();
 	}
 	
 	public void addChild(Node child){

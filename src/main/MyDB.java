@@ -97,11 +97,11 @@ public class MyDB {
 
 
 	private String convert(String s) {
-		int index = s.indexOf("$");
-		if(index > -1){
-			// System.out.println(s +  " -> " + s.substring(0, index));
-			s = s.substring(0, index);
-		}
+//		int index = s.indexOf("$");
+//		if(index > -1){
+//			// System.out.println(s +  " -> " + s.substring(0, index));
+//			s = s.substring(0, index);
+//		}
 		return s.replace('/', '.');
 	}
    
