@@ -39,7 +39,7 @@ public class Main {
         String jarName = "/home/USERNAME/Downloads/cfm.jar";
         // jarName = "/home/USERNAME/Desktop/samplejar.jar";
         // jarName = "/home/USERNAME/Desktop/loopsamplejar.jar";
-        jarName = "/home/USERNAME/Desktop/asmsample4.jar";
+        // jarName = "/home/USERNAME/Desktop/asmsample4.jar";
         
         final File source = new File(jarName);
 		List<String> dirs = new ArrayList<String>();

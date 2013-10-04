@@ -32,6 +32,7 @@ public class Spliter {
 		System.out.println("start " + rootNode.getData());
 		Set<Node> work = new HashSet<Node>();
 		depthiter(rootNode, work);
+		System.out.println(work.size());
 		return work;
 	}
 	
