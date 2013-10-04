@@ -7,7 +7,7 @@ public class L {
 	public static final int DEBUG = 2;
 	public static final int VVV = 1;
 
-	private static int LEVEL = INFO;
+	private static int LEVEL = ERROR;
 	
 	public static void setLevel(int level){
 		LEVEL = level;

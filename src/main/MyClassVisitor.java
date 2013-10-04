@@ -11,6 +11,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import split.Spliter;
+
 public class MyClassVisitor extends ClassVisitor {
 	private MyDB db;
 
@@ -35,11 +37,15 @@ public class MyClassVisitor extends ClassVisitor {
 		if(superName != null){
 			L.vvv("MyClassVisitor.visit:superName: " + superName);
 			db.add(superName);
+			
+			db.addSuper2Subs(superName, name);
 		}
 		if(interfaces != null){
 			for(String i : interfaces){
 				L.vvv("MyClassVisitor.visit:interfaces: " + i);
 				db.add(i);
+				
+				db.addSuper2Subs(i, name);
 			}
 		}
 	}
@@ -95,7 +101,8 @@ public class MyClassVisitor extends ClassVisitor {
 		MyDB db = new MyDB();
 		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
         String jarName = "/home/USERNAME/Downloads/cfm.jar";
-        jarName = "/home/USERNAME/Desktop/samplejar.jar";
+        // jarName = "/home/USERNAME/Desktop/samplejar.jar";
+        // jarName = "/home/USERNAME/Desktop/loopsamplejar.jar";
         ZipFile f = new ZipFile(jarName);
         Enumeration<? extends ZipEntry> en = f.entries();
         while(en.hasMoreElements()) {
@@ -106,8 +113,10 @@ public class MyClassVisitor extends ClassVisitor {
                 cr.accept(cv, 0);
             }
         }
-        f.close();        
+        f.close();
+        
+        //System.out.println(Spliter.toString(db.getSuper2Subs()));
         split.Spliter spliter = new split.Spliter();
-        spliter.start(db.getDependency());
+        spliter.start2(db.getDependency(), db.getSuper2Subs());
 	}
 }

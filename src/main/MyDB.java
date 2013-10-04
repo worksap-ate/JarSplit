@@ -10,10 +10,12 @@ import org.objectweb.asm.signature.SignatureReader;
 
 public class MyDB {
 	private Map<String, Map<String, Integer>> dependency;
+	private Map<String, Set<String>> super2subs; // superclass->subclass(es)
 	private String current;
     
 	public MyDB(){
 		this.dependency = new HashMap<String, Map<String, Integer>>();
+		this.super2subs = new HashMap<String, Set<String>>();
 	}
 	
 	public void setCurrent(String key){
@@ -23,6 +25,16 @@ public class MyDB {
 		if(!this.dependency.containsKey(key)){
 			this.dependency.put(key, new HashMap<String, Integer>());
 		}
+	}
+	
+	void addSuper2Subs(String superName, String subName){
+		superName = convert(superName);
+		subName = convert(subName);
+		
+		if(!this.super2subs.containsKey(superName)){
+			this.super2subs.put(superName, new HashSet<String>());
+		}
+		this.super2subs.get(superName).add(subName);
 	}
 	
 	public void add(String depend){
@@ -85,6 +97,11 @@ public class MyDB {
 
 
 	private String convert(String s) {
+		int index = s.indexOf("$");
+		if(index > -1){
+			// System.out.println(s +  " -> " + s.substring(0, index));
+			s = s.substring(0, index);
+		}
 		return s.replace('/', '.');
 	}
    
@@ -108,6 +125,18 @@ public class MyDB {
 		for(Map.Entry<String, Map<String, Integer>> entry : this.dependency.entrySet()){
 			Set<String> temp = new HashSet<String>();
 			for(String t : entry.getValue().keySet()){
+				temp.add(t);
+			}
+			ret.put(entry.getKey(), temp);
+		}
+		return ret;
+	}
+	
+	public Map<String, Set<String>> getSuper2Subs(){
+		Map<String, Set<String>> ret = new HashMap<String, Set<String>>();
+		for(Map.Entry<String, Set<String>> entry : this.super2subs.entrySet()){
+			Set<String> temp = new HashSet<String>();
+			for(String t : entry.getValue()){
 				temp.add(t);
 			}
 			ret.put(entry.getKey(), temp);
