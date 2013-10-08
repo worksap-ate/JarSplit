@@ -1,13 +1,13 @@
 package split;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import scc.*;
+import java.io.*;
 
-public class GraphMaker {
+public class CopyOfCopyOfGraphMaker {
 
 	private Set<String> getRealRoots(Set<String> provisionalRoots, Map<String, Node> nodes){
 		Set<String> ret = new HashSet<String>();
@@ -45,33 +45,26 @@ public class GraphMaker {
 	}
 
 	
-	private void addRelation(Map<String, Set<String>> dependency, Map<String, Node> nodes, Set<String> roots){
+	private void addRelation(Graph<String> graph, Set<String> roots, Map<String, Set<String>> dependency){
 		for(Map.Entry<String, Set<String>> entry : dependency.entrySet()){
-			Node node = nodes.get(entry.getKey());
 			for(String key2 : entry.getValue()){
-				node.addChild(nodes.get(key2));
+				graph.addEdge(entry.getKey(), key2);
 				roots.remove(key2);
 			}
 		}
 	}
 
-	private void addNonMySuperClass(Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs, Map<String, Node> nodes, Set<String> roots){
+	private void addNonMySuperClass(Graph<String> graph, Set<String> roots, Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs){
 		for(Map.Entry<String, Set<String>> entry : super2subs.entrySet()){
 			String superName = entry.getKey();
 			Set<String> subNames = entry.getValue();
-			Set<Node> subNodes = new HashSet<Node>();
-			for(String subName : entry.getValue()){
-				subNodes.add(nodes.get(subName));
-			}
 			
 			for(Map.Entry<String, Set<String>> depends : dependency.entrySet()){
 				String key = depends.getKey();
-				Node targetNode = nodes.get(key);
-
 				if(depends.getValue().contains(superName) && !subNames.contains(key)){
-					for(Node subNode : subNodes){
-						targetNode.addChild(subNode);
-						roots.remove(subNode.getData());
+					for(String subName : subNames){
+						graph.addEdge(key, subName);
+						roots.remove(subName);
 					}
 					
 				}
@@ -82,35 +75,25 @@ public class GraphMaker {
 	
 	
 	public Set<Node> makeGraph(Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs){
-		Map<String, Node> nodes = convertToNode(dependency);
-		Set<String> roots = new HashSet<String>(dependency.keySet());
-		addRelation(dependency, nodes, roots);
-		addNonMySuperClass(dependency, super2subs, nodes, roots);
+		Graph<String> graph = new Graph<String>();
+		Set<String> roots = new HashSet<String>();
+		roots.addAll(dependency.keySet());
+		addRelation(graph, roots, dependency);
+		addNonMySuperClass(graph, roots, dependency, super2subs);
 		
-		Set<Node> rootNodes = new HashSet<Node>();
-		//for(String root : getRealRoots(dependency.keySet(), nodes)){
-		for(String root : roots){
-			rootNodes.add(nodes.get(root));
+		System.out.println("roots size: " + roots.size());
+		
+		System.out.println(graph.getVertexes().size());
+		try {
+			Graph<Set<String>> sGraph = new Simplifier<String>().simplify(graph, roots);
+			System.out.println(sGraph.getVertexes().size());
+			sGraph.show(new PrintStream("SimpleGraph.txt"));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
 		}
 		
-		// return rootNodes;
-		return this.simplifyGraph(rootNodes, 3);
-	}
-	
-	private Set<Node> simplifyGraph(Set<Node> roots, int numRoots){
-		List<Node> ret = new ArrayList<Node>();
-		for(int i=0; i<numRoots; i++){
-			ret.add(new Node("DUMMY_ROOT_" + i));
-		}
-		int counter = 0;
-		for(Node root : roots){
-			ret.get(counter).addChild(root);
-			counter++;
-			if(counter==numRoots){
-				counter=0;
-			}			
-		}
-		return new HashSet<Node>(ret);
+        System.out.println("finish");
+        return new HashSet<Node>();
 	}
 
 

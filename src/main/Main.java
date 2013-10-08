@@ -21,6 +21,7 @@ import java.util.zip.ZipFile;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
+
 public class Main {
 	private static byte[] getByte(InputStream iStream) throws IOException{
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -37,6 +38,7 @@ public class Main {
 		MyDB db = new MyDB();
 		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
         String jarName = "/home/USERNAME/Downloads/cfm.jar";
+        // jarName = "/home/USERNAME/Desktop/cfm2.jar";
         // jarName = "/home/USERNAME/Desktop/samplejar.jar";
         // jarName = "/home/USERNAME/Desktop/loopsamplejar.jar";
         // jarName = "/home/USERNAME/Desktop/asmsample4.jar";
@@ -51,10 +53,10 @@ public class Main {
             JarEntry e = en.nextElement();
             String name = e.getName();
             if(e.isDirectory()){
-            	System.out.println(" ディレクトリ名: [" + name + "]");
+            	// System.out.println(" ディレクトリ名: [" + name + "]");
             	dirs.add(name);
             }else{
-            	System.out.println(" ファイル名: [" + name + "]");
+            	// System.out.println(" ファイル名: [" + name + "]");
             	files.put(name, getByte(f.getInputStream(e)));
             	
                 if(name.endsWith(".class")) {

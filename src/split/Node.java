@@ -14,6 +14,9 @@ public class Node {
 	// public Set<Node> dependency;
 	// public Set<Node> todo_notify;
 
+	public String toString(){
+		return this.data;
+	}
 	public int hashCode(){
         return data.hashCode();
     }

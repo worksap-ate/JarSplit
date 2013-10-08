@@ -19,6 +19,19 @@ public class Spliter {
 		// return new ArrayList<Set<String>>();
 		
 	}
+	
+	public List<Set<String>> _start(Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs){
+		CopyOfCopyOfGraphMaker graphMaker = new CopyOfCopyOfGraphMaker();
+		Set<Node> rootNodes = graphMaker.makeGraph(dependency, super2subs);
+		
+		
+		// stat(rootNodes);
+		
+		// return depthfirstsearchs(rootNodes);
+		// count(rootNodes);
+		return new ArrayList<Set<String>>();
+		
+	}
 
 	private void depthiter(Node rootNode, Set<Node> work){
 		if(work.add(rootNode)){
