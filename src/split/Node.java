@@ -1,18 +1,11 @@
 package split;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 
 public class Node {
 	private String data;
+	private List<Node> parents;
 	private List<Node> children;
-	
-	// public boolean visitting;
-	// public Set<Node> dependency;
-	// public Set<Node> todo_notify;
 
 	public String toString(){
 		return this.data;
@@ -26,22 +19,27 @@ public class Node {
 	
 	public Node(String data){
 		this.data = data;
+		this.parents = new ArrayList<Node>();
 		this.children = new ArrayList<Node>();
-		
-		// this.visitting = false;
-		// this.dependency = new HashSet<Node>();
-		// this.todo_notify = new HashSet<Node>();
 	}
 	
 	public void addChild(Node child){
 		this.children.add(child);
+		if(!child.parents.contains(this)){
+			child.parents.add(this);
+		}
 	}
+
 	public List<Node> getChildren(){
 		return this.children;
 	}
 
 	public String getData(){
 		return this.data;
+	}
+	
+	public List<Node> getParents(){
+		return this.parents;
 	}
 
 	public void show(int depth){

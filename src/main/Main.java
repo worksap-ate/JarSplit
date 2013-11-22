@@ -15,9 +15,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
@@ -35,13 +32,17 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws IOException {
+		if(args.length != 1){
+        	throw new RuntimeException(".jar file name is required.");
+        }
+    	// e.g. cfm.jar or /home/USERNAME/Downloads/cfm.jar
+    	String jarName = args[0];
+        System.out.println("target jar: " + jarName);
+        
+		long start = System.currentTimeMillis();
+
 		MyDB db = new MyDB();
 		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
-        String jarName = "/home/USERNAME/Downloads/cfm.jar";
-        // jarName = "/home/USERNAME/Desktop/cfm2.jar";
-        // jarName = "/home/USERNAME/Desktop/samplejar.jar";
-        // jarName = "/home/USERNAME/Desktop/loopsamplejar.jar";
-        // jarName = "/home/USERNAME/Desktop/asmsample4.jar";
         
         final File source = new File(jarName);
 		List<String> dirs = new ArrayList<String>();
@@ -67,8 +68,14 @@ public class Main {
         }
         f.close();
         
+        long end_read = System.currentTimeMillis();
+        System.err.println("read all .class time: " + (end_read- start) + "[ms]");
+
         split.Spliter spliter = new split.Spliter();
-        List<Set<String>> modules = spliter.start(db.getDependency(), db.getSuper2Subs());
+        List<Set<String>> modules = spliter.start(db.getDependency(), db.getSuper2Subs(), 5);
+        
+        long end_split = System.currentTimeMillis();
+        System.err.println("split time: " + (end_split- end_read) + "[ms]");
         
         for(int i=0;i<modules.size();i++){
 			System.out.println("number: " + i);
@@ -88,7 +95,7 @@ public class Main {
 				/* create files (include META-INF/MANIFEST.MF) */
 				for(String className : modules.get(i)) {
 					String fileName = className.replace(".", "/") + ".class";
-					System.out.println(" ファイル名: [" + fileName + "]");
+					// System.out.println(" ファイル名: [" + fileName + "]");
 					if(files.containsKey(fileName)){
 						final JarEntry entry = new JarEntry(fileName);
 						jarOutStream.putNextEntry(entry);
@@ -101,5 +108,8 @@ public class Main {
 				jarOutStream.close();
 			}
 		}
+        long end = System.currentTimeMillis();
+        System.err.println("write .class time: " + (end - end_split) + "[ms]");
+        System.err.println("total time: " + (end - start) + "[ms]");
 	}
 }
