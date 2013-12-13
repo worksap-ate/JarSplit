@@ -1,15 +1,10 @@
 package main;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+
 
 public class MyClassVisitor extends ClassVisitor {
 	private MyDB db;
@@ -35,11 +30,15 @@ public class MyClassVisitor extends ClassVisitor {
 		if(superName != null){
 			L.vvv("MyClassVisitor.visit:superName: " + superName);
 			db.add(superName);
+			
+			db.addSuper2Subs(superName, name);
 		}
 		if(interfaces != null){
 			for(String i : interfaces){
 				L.vvv("MyClassVisitor.visit:interfaces: " + i);
 				db.add(i);
+				
+				db.addSuper2Subs(i, name);
 			}
 		}
 	}
@@ -89,24 +88,5 @@ public class MyClassVisitor extends ClassVisitor {
 		}
 		
 		return new MyMethodVisitor(this.api, this.db);
-	}
-	
-	public static void main(String[] args) throws IOException {
-		MyDB db = new MyDB();
-		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
-        String jarName = "/home/USERNAME/Downloads/cfm.jar";
-        jarName = "/home/USERNAME/Desktop/samplejar.jar";
-        ZipFile f = new ZipFile(jarName);
-        Enumeration<? extends ZipEntry> en = f.entries();
-        while(en.hasMoreElements()) {
-            ZipEntry e = en.nextElement();
-            String name = e.getName();
-            if(name.endsWith(".class")) {
-                ClassReader cr = new ClassReader(f.getInputStream(e));
-                cr.accept(cv, 0);
-            }
-        }
-        f.close();
-        System.out.println(db.toString());
 	}
 }
