@@ -31,12 +31,12 @@ public class MyDB {
 		superName = convert(superName);
 		subName = convert(subName);
 
-//		if(superName.startsWith("java.")){
-//			return;
-//		}
-//		if(superName.startsWith("java.lang.Object")){
-//			return;
-//		}
+		if(superName.startsWith("java.")){
+			return;
+		}
+		if(superName.startsWith("java.lang.Object")){
+			return;
+		}
 		
 		if(!this.super2subs.containsKey(superName)){
 			this.super2subs.put(superName, new HashSet<String>());
@@ -47,12 +47,12 @@ public class MyDB {
 	public void add(String depend){
 		depend = convert(depend);
 		
-//		if(depend.startsWith("java.")){
-//			return;
-//		}
-//		if(depend.startsWith("java.lang.Object")){
-//			return;
-//		}
+		if(depend.startsWith("java.")){
+			return;
+		}
+		if(depend.startsWith("java.lang.Object")){
+			return;
+		}
 
 		if(depend.equals(current)){
 			return;

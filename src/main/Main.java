@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -43,20 +42,13 @@ public class Main {
 
 		MyDB db = new MyDB();
 		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
-        
-        final File source = new File(jarName);
-		List<String> dirs = new ArrayList<String>();
-		Map<String, byte[]> files = new HashMap<String, byte[]>();
-
-		JarFile f = new JarFile(source);
+        Map<String, byte[]> files = new HashMap<String, byte[]>();
+		JarFile f = new JarFile(new File(jarName));
 		Enumeration<? extends JarEntry> en = f.entries();
 		while(en.hasMoreElements()) {
             JarEntry e = en.nextElement();
             String name = e.getName();
-            if(e.isDirectory()){
-            	// System.out.println(" ディレクトリ名: [" + name + "]");
-            	dirs.add(name);
-            }else{
+            if(! e.isDirectory()){
             	// System.out.println(" ファイル名: [" + name + "]");
             	files.put(name, getByte(f.getInputStream(e)));
             	
@@ -82,17 +74,7 @@ public class Main {
 	        final File target = new File("jarsample" + i + ".jar");
 	        final JarOutputStream jarOutStream = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(target)));
 			try {
-//				/* create directories (needless?) */
-//				for (String d : dirs) {
-//					System.out.println(" ディレクトリ名: [" + d + "]");
-//					final JarEntry entry = new JarEntry(d);
-//					entry.setMethod(JarEntry.STORED);
-//					entry.setSize(0);
-//					entry.setCrc(0);
-//					jarOutStream.putNextEntry(entry);
-//					jarOutStream.closeEntry();
-//				}
-				/* create files (include META-INF/MANIFEST.MF) */
+				/* create .class files */
 				for(String className : modules.get(i)) {
 					String fileName = className.replace(".", "/") + ".class";
 					// System.out.println(" ファイル名: [" + fileName + "]");

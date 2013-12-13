@@ -2,7 +2,7 @@ package split;
 
 import java.util.*;
 import kmeans.Kmeans;
-
+import scc.*;
 
 public class GraphMaker {
 	private Map<String, Node> convertToNode(Map<String, Set<String>> dependency){
@@ -149,6 +149,7 @@ public class GraphMaker {
 		return new HashSet<Node>(ret);	
 	}
 	
+	
 	public Set<Node> makeGraph(Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs, int numRoots){
 		Map<String, Node> nodes = convertToNode(dependency);
 		Set<String> roots = new HashSet<String>(dependency.keySet());
@@ -156,10 +157,28 @@ public class GraphMaker {
 		addNonMySuperClass(dependency, super2subs, nodes, roots);
 		
 		Set<Node> rootNodes = new HashSet<Node>();
-		System.out.println("NUM OF ROOT NODE: " + roots.size());
+		System.err.println("NUM OF ROOT NODE: " + roots.size());
 		for(String root : roots){
 			rootNodes.add(nodes.get(root));
 		}
+		
+		Graph<String> g = new Graph<String>(nodes.size());
+		for(Map.Entry<String, Node> e : nodes.entrySet()){
+			String srcName = e.getKey();
+			Node srcNode = e.getValue();
+			for(Node child : srcNode.getChildren()){
+				g.addEdge(srcName, child.getData());
+			}
+		}
+		
+		for(String root : roots){
+			if(! nodes.containsKey(root)){
+				System.err.println("ERROR ERROR");
+			}
+		}
+	    // System.out.println(g.toStringIndex());
+		Graph<Set<String>> simpleGraph = new Simplifier<String>().simplify(g, roots);
+		// System.out.println(simpleGraph.toStringIndex());
 		return rootNodes;
 		// return this.simplifyGraphByFirstChildren(roots, nodes, numRoots);
 		// return this.simplifyGraphByNthChildren(roots, nodes, numRoots, 3);
