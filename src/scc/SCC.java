@@ -17,6 +17,7 @@ public class SCC<T> {
         low.set(vertex, counter.value);
         num.set(vertex, counter.value);
         S.push(vertex);
+        System.out.println("vertex " + vertex);
         for(Integer w : g.getAdjacentVertexIndices(vertex)){
             for(Set<Integer> scc : sccs){
                 if(scc.contains(w)){
@@ -53,14 +54,17 @@ public class SCC<T> {
             roots_.add(g.toIndex(root));
         }
         Set<Set<Integer>> sccs = new THashSet<Set<Integer>>();
+        ArrayList<Integer> num = new ArrayList<Integer>(g.getVertexes().size());
+        ArrayList<Integer> low = new ArrayList<Integer>(g.getVertexes().size());
+        
         for(Integer v : roots_){
             for(Set<Integer> scc : sccs){
                 if(scc.contains(v)){
                     continue;
                 }
             }
-            ArrayList<Integer> num = new ArrayList<Integer>(g.getVertexes().size());
-            ArrayList<Integer> low = new ArrayList<Integer>(g.getVertexes().size());
+            // ArrayList<Integer> num = new ArrayList<Integer>(g.getVertexes().size());
+//            ArrayList<Integer> low = new ArrayList<Integer>(g.getVertexes().size());
             for(int i=0; i<g.getVertexes().size(); i++){
                 num.add(NULL);
                 low.add(NULL);

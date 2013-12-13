@@ -1,6 +1,7 @@
 package scc;
 import java.util.*;
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 
 public class Simplifier<T> {
     public Graph<Set<T>> simplify(Graph<T> graph){
@@ -29,11 +30,11 @@ public class Simplifier<T> {
  
     
     private <S> Map<Integer, Set<Integer>> calcPre(Graph<S> graph){
-    	Map<Integer, Set<Integer>> pre = new HashMap<Integer, Set<Integer>>();
+    	Map<Integer, Set<Integer>> pre = new THashMap<Integer, Set<Integer>>();
     	for(int v=0;v<graph.getVertexes().size();v++){
     		for(int w : graph.getAdjacentVertexIndices(v)){
     			if(!pre.containsKey(w)){
-    				pre.put(w, new HashSet<Integer>());
+    				pre.put(w, new THashSet<Integer>());
     			}
     			pre.get(w).add(v);
     		}
@@ -42,7 +43,7 @@ public class Simplifier<T> {
     }
     
     private Graph<Set<T>> sim(Graph<Set<T>> graph){
-    	Map<Integer, List<Integer>> simulationNodes = new HashMap<Integer, List<Integer>>();
+    	Map<Integer, List<Integer>> simulationNodes = new THashMap<Integer, List<Integer>>();
     	Map<Integer, Set<Integer>> pre = calcPre(graph);
     	for(int v=0;v<graph.getVertexes().size();v++){
     		for(int w=v+1;w<graph.getVertexes().size();w++){
@@ -61,7 +62,7 @@ public class Simplifier<T> {
     		return graph;
     	}
 
-    	Set<Integer> duplicatedNodes = new HashSet<Integer>();
+    	Set<Integer> duplicatedNodes = new THashSet<Integer>();
     	for(List<Integer> v : simulationNodes.values()){
     		duplicatedNodes.addAll(v);
     	}
@@ -71,7 +72,7 @@ public class Simplifier<T> {
     		if(duplicatedNodes.contains(v)){
     			continue;
     		}
-    		Set<T> src = new HashSet<T>();
+    		Set<T> src = new THashSet<T>();
     		src.addAll(graph.fromIndex(v));
     		if(simulationNodes.containsKey(v)){
     			for(int d : simulationNodes.get(v)){
@@ -82,7 +83,7 @@ public class Simplifier<T> {
     			if(duplicatedNodes.contains(w)){
     				continue;
     			}
-    			Set<T> dst = new HashSet<T>();
+    			Set<T> dst = new THashSet<T>();
     			dst.addAll(graph.fromIndex(w));
     			if(simulationNodes.containsKey(w)){
     				for(int d : simulationNodes.get(w)){

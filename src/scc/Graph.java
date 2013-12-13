@@ -58,7 +58,7 @@ public class Graph<T> {
     }
 
     public Set<T> getRoots(){
-    	Set<Integer> ret = new HashSet<Integer>(this.getVertexes().size());
+    	Set<Integer> ret = new THashSet<Integer>(this.getVertexes().size());
     	for(int v=0;v<this.getVertexes().size();v++){
     		ret.add(v);
     	}
@@ -67,25 +67,14 @@ public class Graph<T> {
     			ret.remove(w);
     		}
     	}
-    	Set<T> ret_ = new HashSet<T>(ret.size());
+    	Set<T> ret_ = new THashSet<T>(ret.size());
     	for(int v : ret){
     		ret_.add(this.fromIndex(v));
     	}
     	return ret_;
     }
 
-	public Set<T> findSelfLoop(){
-		Set<T> ret = new HashSet<T>();
-		for(int v=0;v<this.getVertexes().size();v++){
-			for(int w : this.getAdjacentVertexIndices(v)){
-				if(w == v){
-					ret.add(this.fromIndex(v));
-					continue;
-				}
-			}
-		}
-		return ret;
-	}
+	
 
     public String toString(){
         StringBuilder sb = new StringBuilder();
