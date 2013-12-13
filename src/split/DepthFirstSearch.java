@@ -2,8 +2,7 @@ package split;
 import java.util.*;
 import scc.*;
 
-public class CopyOfSpliter<T> {
-
+public class DepthFirstSearch<T> {
 	private void depthfirstsearch(Graph<T> graph, int v, List<Set<Integer>> attrs){
 		for(int u : graph.getAdjacentVertexIndices(v)){
 			if(u == v){

@@ -16,7 +16,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
-
+import split.*;
 
 public class Main {
 	private static byte[] getByte(InputStream iStream) throws IOException{
@@ -63,8 +63,7 @@ public class Main {
         long end_read = System.currentTimeMillis();
         System.err.println("read all .class time: " + (end_read- start) + "[ms]");
 
-        split.Spliter spliter = new split.Spliter();
-        List<Set<String>> modules = spliter.start(db.getDependency(), db.getSuper2Subs(), 5);
+        List<Set<String>> modules = new Spliter().split(db.getDependency(), db.getSuper2Subs(), 5);
         
         long end_split = System.currentTimeMillis();
         System.err.println("split time: " + (end_split- end_read) + "[ms]");
@@ -77,7 +76,7 @@ public class Main {
 				/* create .class files */
 				for(String className : modules.get(i)) {
 					String fileName = className.replace(".", "/") + ".class";
-					// System.out.println(" ファイル名: [" + fileName + "]");
+					System.out.println(" ファイル名: [" + fileName + "]");
 					if(files.containsKey(fileName)){
 						final JarEntry entry = new JarEntry(fileName);
 						jarOutStream.putNextEntry(entry);

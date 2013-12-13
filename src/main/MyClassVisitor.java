@@ -1,18 +1,10 @@
 package main;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import split.Spliter;
 
 public class MyClassVisitor extends ClassVisitor {
 	private MyDB db;

@@ -27,14 +27,32 @@ public class MyDB {
 		}
 	}
 	
+	private boolean filter(String name){
+		if(name.startsWith("java.")){
+			return false;
+		}
+		if(name.startsWith("java.lang.Object")){
+			return false;
+		}
+		if(name.equals("int") ||
+		   name.equals("double") ||
+		   name.equals("float") ||
+		   name.equals("char") ||
+		   name.equals("boolean") ||
+		   name.equals("byte") ||
+		   name.equals("int") ||
+		   name.equals("short") ||
+		   name.equals("long")){
+			return false;
+		}
+	   return true;
+	}
+
 	void addSuper2Subs(String superName, String subName){
 		superName = convert(superName);
 		subName = convert(subName);
 
-		if(superName.startsWith("java.")){
-			return;
-		}
-		if(superName.startsWith("java.lang.Object")){
+		if(!filter(superName)){
 			return;
 		}
 		
@@ -46,14 +64,10 @@ public class MyDB {
 	
 	public void add(String depend){
 		depend = convert(depend);
-		
-		if(depend.startsWith("java.")){
-			return;
-		}
-		if(depend.startsWith("java.lang.Object")){
-			return;
-		}
 
+		if(!filter(depend)){
+			return;
+		}
 		if(depend.equals(current)){
 			return;
 		}
