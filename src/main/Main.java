@@ -45,6 +45,7 @@ public class Main {
 		MyDB db = new MyDB();
 		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
         Map<String, byte[]> files = new HashMap<String, byte[]>();
+        Set<String> fileNames = new THashSet<String>();
 		JarFile f = new JarFile(new File(jarName));
 		Enumeration<? extends JarEntry> en = f.entries();
 		while(en.hasMoreElements()) {
@@ -70,6 +71,7 @@ public class Main {
         long end_split = System.currentTimeMillis();
         System.err.println("split time: " + (end_split- end_read) + "[ms]");
         
+        Set<String> notContain = new THashSet<String>();
         for(int i=0;i<modules.size();i++){
 			System.out.println("number: " + i);
 	        final File target = new File("jarsample" + i + ".jar");
@@ -84,6 +86,9 @@ public class Main {
 						jarOutStream.putNextEntry(entry);
 						jarOutStream.write(files.get(fileName));
 						jarOutStream.closeEntry();
+						fileNames.remove(fileName);
+					}else{
+						notContain.add(fileName);
 					}
 				}
 				jarOutStream.finish();
@@ -91,6 +96,11 @@ public class Main {
 				jarOutStream.close();
 			}
 		}
+        System.out.println("# un used files " + fileNames.size());
+        System.out.println("# notContain files " + notContain.size());
+        for(String s : notContain){
+        	System.out.println(s);
+        }
         long end = System.currentTimeMillis();
         System.err.println("write .class time: " + (end - end_split) + "[ms]");
         System.err.println("total time: " + (end - start) + "[ms]");
