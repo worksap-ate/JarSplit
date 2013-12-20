@@ -1,4 +1,6 @@
 package split;
+import gnu.trove.set.hash.THashSet;
+
 import java.util.*;
 import scc.*;
 
@@ -17,7 +19,7 @@ public class DepthFirstSearch<T> {
 	public List<Set<Integer>> depthfirstsearchs(Graph<T> graph, Set<Integer> roots){
 		List<Set<Integer>> attrs = new ArrayList<Set<Integer>>(graph.getVertexes().size());
 		for(int i=0;i<graph.getVertexes().size();i++){
-			attrs.add(new HashSet<Integer>());
+			attrs.add(new THashSet<Integer>());
 		}
 		for(int v : roots){
 			depthfirstsearch(graph, v, attrs);
