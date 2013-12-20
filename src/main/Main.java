@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,16 @@ public class Main {
 		buffer.flush();
 		return buffer.toByteArray();
 	}
+
+    private static List<Set<String>> union(List<Set<String>> x){
+        List<Set<String>> ret = new ArrayList<Set<String>>();
+        Set<String> temp = new THashSet<String>();
+        for(Set<String> i : x){
+            temp.addAll(i);
+        }
+        ret.add(temp);
+        return ret;
+    }
 
 	public static void main(String[] args) throws IOException {
 		if(args.length != 1){
@@ -67,6 +78,7 @@ public class Main {
         System.err.println("read all .class time: " + (end_read- start) + "[ms]");
 
         List<Set<String>> modules = new Spliter().split(db.getDependency(), db.getSuper2Subs(), 5);
+        modules = union(modules);
         
         long end_split = System.currentTimeMillis();
         System.err.println("split time: " + (end_split- end_read) + "[ms]");
