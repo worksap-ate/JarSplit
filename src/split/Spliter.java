@@ -102,6 +102,18 @@ public class Spliter {
 			System.out.println(v + " : " + attrs.get(v));
 		}
 		
+		if(rootIndices.size() <= numRoots){
+			List<Set<String>> ret = new ArrayList<Set<String>>(rootIndices.size());
+			for(int v : rootIndices){
+				Set<String> temp = new THashSet<String>(attrs.get(v).size());
+				for(int u : attrs.get(v)){
+					temp.addAll(simpleGraph.fromIndex(u));
+				}
+				ret.add(temp);
+			}
+			return ret;
+		}
+		
 		int size = simpleGraph.getVertexes().size();
 		List<List<Double>> points = new ArrayList<List<Double>>(rootIndices.size());
 		Map<Integer, Integer> association = new THashMap<Integer, Integer>();
