@@ -1,5 +1,7 @@
 package main;
 
+import gnu.trove.set.hash.THashSet;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,10 +14,12 @@ public class MyDB {
 	private Map<String, Map<String, Integer>> dependency;
 	private Map<String, Set<String>> super2subs; // superclass->subclass(es)
 	private String current;
-    
-	public MyDB(){
+	private Set<String> fileNames;
+
+	public MyDB(Set<String> fileNames){
 		this.dependency = new HashMap<String, Map<String, Integer>>();
 		this.super2subs = new HashMap<String, Set<String>>();
+		this.fileNames = fileNames;
 	}
 	
 	public void setCurrent(String key){
@@ -43,6 +47,9 @@ public class MyDB {
 		   name.equals("int") ||
 		   name.equals("short") ||
 		   name.equals("long")){
+			return false;
+		}
+		if(!this.fileNames.contains(name)){
 			return false;
 		}
 	   return true;

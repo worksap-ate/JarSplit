@@ -33,6 +33,21 @@ public class Main {
 		return buffer.toByteArray();
 	}
 
+	private static Set<String> getFileNames(String jarName) throws IOException{
+        Set<String> ret = new THashSet<String>();
+        JarFile f = new JarFile(new File(jarName));
+        Enumeration<? extends JarEntry> en = f.entries();
+        while(en.hasMoreElements()) {
+            JarEntry e = en.nextElement();
+            String name = e.getName();
+            if(! e.isDirectory()){
+                ret.add(name.replace(".class", "").replace("/", "."));
+            }
+        }
+        f.close();
+        return ret;
+    }
+
     private static List<Set<String>> union(List<Set<String>> x){
         List<Set<String>> ret = new ArrayList<Set<String>>();
         Set<String> temp = new THashSet<String>();
@@ -53,7 +68,8 @@ public class Main {
         
 		long start = System.currentTimeMillis();
 
-		MyDB db = new MyDB();
+		Set<String> fileNames0 = getFileNames(jarName);
+		MyDB db = new MyDB(fileNames0);
 		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
         Map<String, byte[]> files = new HashMap<String, byte[]>();
         Set<String> fileNames = new THashSet<String>();
