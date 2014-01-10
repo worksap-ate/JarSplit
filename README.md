@@ -13,7 +13,7 @@ JarSplit
 -------------
 jarの作成、コンパイルは現在コマンドラインからではなくて、Eclipseでやってます
 
-1. scc.jarを作成
+1. scc.jarを作成(optimizeブランチが最新)
 このプログラムもgnu troveに依存しています
 
 2. 依存ライブラリを/usr/local/libなどに置く
