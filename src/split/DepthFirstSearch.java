@@ -7,9 +7,6 @@ import scc.*;
 public class DepthFirstSearch<T> {
 	private void depthfirstsearch(Graph<T> graph, int v, List<Set<Integer>> attrs){
 		for(int u : graph.getAdjacentVertexIndices(v)){
-			if(u == v){
-				continue;
-			}
 			depthfirstsearch(graph, u, attrs);
 			attrs.get(v).addAll(attrs.get(u));
 		}
