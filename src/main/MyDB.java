@@ -1,6 +1,7 @@
 package main;
 
 import gnu.trove.set.hash.THashSet;
+import gnu.trove.map.hash.THashMap;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,9 +18,9 @@ public class MyDB {
 	private Set<String> fileNames;
 
 	public MyDB(Set<String> fileNames){
-		this.dependency = new HashMap<String, Map<String, Integer>>();
-		this.super2subs = new HashMap<String, Set<String>>();
 		this.fileNames = fileNames;
+		this.dependency = new THashMap<String, Map<String, Integer>>();
+		this.super2subs = new THashMap<String, Set<String>>();
 	}
 	
 	public void setCurrent(String key){
@@ -30,8 +31,11 @@ public class MyDB {
 			this.dependency.put(key, new HashMap<String, Integer>());
 		}
 	}
-	
+
 	private boolean filter(String name){
+		return this.fileNames.contains(name);
+	}
+	private boolean _filter(String name){
 		if(name.startsWith("java.")){
 			return false;
 		}
@@ -64,7 +68,7 @@ public class MyDB {
 		}
 		
 		if(!this.super2subs.containsKey(superName)){
-			this.super2subs.put(superName, new HashSet<String>());
+			this.super2subs.put(superName, new THashSet<String>());
 		}
 		this.super2subs.get(superName).add(subName);
 	}
@@ -159,7 +163,7 @@ public class MyDB {
 	public Map<String, Set<String>> getDependency(){
 		Map<String, Set<String>> ret = new HashMap<String, Set<String>>();
 		for(Map.Entry<String, Map<String, Integer>> entry : this.dependency.entrySet()){
-			Set<String> temp = new HashSet<String>();
+			Set<String> temp = new THashSet<String>();
 			for(String t : entry.getValue().keySet()){
 				temp.add(t);
 			}
@@ -171,7 +175,7 @@ public class MyDB {
 	public Map<String, Set<String>> getSuper2Subs(){
 		Map<String, Set<String>> ret = new HashMap<String, Set<String>>();
 		for(Map.Entry<String, Set<String>> entry : this.super2subs.entrySet()){
-			Set<String> temp = new HashSet<String>();
+			Set<String> temp = new THashSet<String>();
 			for(String t : entry.getValue()){
 				temp.add(t);
 			}

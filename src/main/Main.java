@@ -21,6 +21,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import split.*;
 
+
+
+
+
 public class Main {
 	private static byte[] getByte(InputStream iStream) throws IOException{
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -81,20 +85,40 @@ public class Main {
             if(! e.isDirectory()){
             	// System.out.println(" ファイル名: [" + name + "]");
             	files.put(name, getByte(f.getInputStream(e)));
+            	fileNames.add(name);
             	
                 if(name.endsWith(".class")) {
-                    ClassReader cr = new ClassReader(f.getInputStream(e));
+                	ClassReader cr = new ClassReader(f.getInputStream(e));
                     cr.accept(cv, 0);
                 }
             }
         }
         f.close();
+        System.out.println("FILE NUM " + files.size());
+        
         
         long end_read = System.currentTimeMillis();
         System.err.println("read all .class time: " + (end_read- start) + "[ms]");
-
+        
         List<Set<String>> modules = new Spliter().split(db.getDependency(), db.getSuper2Subs(), 5);
+        for(Set<String> module : modules){
+        	fileNames.removeAll(module);
+        }
         modules = union(modules);
+        int n = 0;
+        int c = 0;
+        int t = fileNames.size() / modules.size();
+        for(String fileName : fileNames){
+        	if(!fileName.equals("META-INF/MANIFEST.MF")){
+	        	String className = fileName.replace(".class", "").replace("/", ".");
+	        	modules.get(n).add(className);
+	        	c++;
+	        	if(c > t){
+	        		n++;
+	        		c=0;
+	        	}
+        	}
+        }
         
         long end_split = System.currentTimeMillis();
         System.err.println("split time: " + (end_split- end_read) + "[ms]");
@@ -108,7 +132,7 @@ public class Main {
 				/* create .class files */
 				for(String className : modules.get(i)) {
 					String fileName = className.replace(".", "/") + ".class";
-					System.out.println(" ファイル名: [" + fileName + "]");
+					// System.out.println(" ファイル名: [" + fileName + "]");
 					if(files.containsKey(fileName)){
 						final JarEntry entry = new JarEntry(fileName);
 						jarOutStream.putNextEntry(entry);

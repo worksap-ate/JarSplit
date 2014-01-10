@@ -23,9 +23,9 @@ public class Spliter {
 		Graph<String> graph = new Graph<String>();
 		for(Map.Entry<String, Set<String>> e : dependency.entrySet()){
 			String ownerName = e.getKey();
+			graph.addEdge(ownerName, ownerName);
 			for(String instanceName : e.getValue()){
 				graph.addEdge(ownerName, instanceName);
-				// roots.remove(instanceName);
 			}
 		}
 
@@ -50,9 +50,10 @@ public class Spliter {
 		}
 
 		System.err.println("First Graph");
-		System.err.println(graph.toStringIndex());
+		// System.err.println(graph.toStringIndex());
 		Set<String> roots = graph.getRoots();
 		System.out.println(roots.size());
+		System.out.println("VERTEX NUM " + graph.getVertexes().size());
 		
 		Graph<Set<String>> simpleGraph = new Simplifier<String>().simplify(graph, roots);
 		
@@ -64,9 +65,9 @@ public class Spliter {
 		//---
 		Set<Integer> rootIndices = simpleGraph.getRootIndices();
 		List<Set<Integer>> attrs = new DepthFirstSearch<Set<String>>().depthfirstsearchs(simpleGraph, rootIndices);
-		for(int v : rootIndices){
-			System.out.println(v + " : " + attrs.get(v));
-		}
+//		for(int v : rootIndices){
+//			System.out.println(v + " : " + attrs.get(v));
+//		}
 		
 		if(rootIndices.size() <= numRoots){
 			List<Set<String>> ret = new ArrayList<Set<String>>(rootIndices.size());
@@ -96,7 +97,7 @@ public class Spliter {
 			points.add(point);
 			association.put(c, v);
 			c++;
-			System.out.println(point);
+			// System.out.println(point);
 		}
 		List<Integer> assigns = new Kmeans().start(points, numRoots);
 		System.out.println(assigns);
