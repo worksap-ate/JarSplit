@@ -7,6 +7,9 @@ import scc.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
+import edu.princeton.cs.algs4.directed.*;
+
+
 public class Spliter {
 	private void addSpecialEdge(String ownerName, String parentName, Map<String, Set<String>> super2subs, Set<String> work){
 		if(work.add(parentName)){
@@ -18,58 +21,59 @@ public class Spliter {
 		}
 	}
 
-	public List<Set<String>> split(Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs, int numRoots){
-		// make isA
-		Map<String, Set<String>> isA = new THashMap<String, Set<String>>();
-		for(Map.Entry<String, Set<String>> e : super2subs.entrySet()){
-			String superName = e.getKey();
-			for(String childName : e.getValue()){
-				if(!isA.containsKey(childName)){
-					isA.put(childName, new THashSet<String>());
+	private Map<String, Integer> createMappings(Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs){
+		Map<String, Integer> mappings = new THashMap<String, Integer>();		
+		int count = 0;
+		for(Map.Entry<String, Set<String>> e : dependency.entrySet()){
+			String key = e.getKey();
+			if(!mappings.containsKey(key)){
+				mappings.put(key, count);
+				count++;
+			}
+			for(String value : e.getValue()){
+				if(!mappings.containsKey(value)){
+					mappings.put(value, count);
+					count++;
 				}
-				isA.get(childName).add(superName);
 			}
 		}
-
-		// make hasA
-		Map<String, Set<String>> hasA = new THashMap<String, Set<String>>();
-		for(Map.Entry<String, Set<String>> e : dependency.entrySet()){
-			String ownerName = e.getKey();
-			for(String instanceName : e.getValue()){
-				if(!isA.containsKey(ownerName) || !isA.get(ownerName).contains(instanceName)){
-					if(!hasA.containsKey(ownerName)){
-						hasA.put(ownerName, new THashSet<String>());
-					}
-					hasA.get(ownerName).add(instanceName);
+		for(Map.Entry<String, Set<String>> e : super2subs.entrySet()){
+			String key = e.getKey();
+			if(!mappings.containsKey(key)){
+				mappings.put(key, count);
+				count++;
+			}
+			for(String value : e.getValue()){
+				if(!mappings.containsKey(value)){
+					mappings.put(value, count);
+					count++;
 				}
 			}
 		}
 		
-//		Set<String> roots = new HashSet<String>();
-//		roots.addAll(hasA.keySet());
-//		roots.addAll(isA.keySet());
-//
+		return mappings;
+	}
+	
+	private Digraph createGraph(Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs, Map<String, Integer> mappings){
+		Digraph graph = new Digraph(mappings.size());
 		// addEdge owner -> instance
-		Graph<String> graph = new Graph<String>();
-		for(Map.Entry<String, Set<String>> e : hasA.entrySet()){
+		for(Map.Entry<String, Set<String>> e : dependency.entrySet()){
 			String ownerName = e.getKey();
 			for(String instanceName : e.getValue()){
-				graph.addEdge(ownerName, instanceName);
-				// roots.remove(instanceName);
+				graph.addEdge(mappings.get(ownerName), mappings.get(instanceName));
 			}
 		}
 
 		// addEdge child -> parent
-		for(Map.Entry<String, Set<String>> e : isA.entrySet()){
-			String childName = e.getKey();
-			for(String parentName : e.getValue()){
-				graph.addEdge(childName, parentName);
-				// roots.remove(parentName);
+		for(Map.Entry<String, Set<String>> e : super2subs.entrySet()){
+			String superName = e.getKey();
+			for(String childName : e.getValue()){
+				graph.addEdge(mappings.get(childName), mappings.get(superName));
 			}
 		}
 
 		// addEdge owner -> instance -> child ( -> child)*
-		for(Map.Entry<String, Set<String>> e : hasA.entrySet()){
+		for(Map.Entry<String, Set<String>> e : dependency.entrySet()){
 			String ownerName = e.getKey();
 			Set<String> work = new THashSet<String>();
 			for(String instanceName : e.getValue()){
@@ -77,22 +81,60 @@ public class Spliter {
 			}
 			for(String n : work){
 				if(!n.equals(ownerName)){
-					graph.addEdge(ownerName, n);
-					// roots.remove(n);
+					graph.addEdge(mappings.get(ownerName), mappings.get(n));
 				}
 			}
 		}
-
-		System.err.println("First Graph");
-		System.err.println(graph.toStringIndex());
-		Set<String> roots = graph.getRoots();
-		System.out.println(roots.size());
 		
-		Graph<Set<String>> simpleGraph = new Simplifier<String>().simplify(graph, roots);
-		
-		System.err.println("\nFinal Graph");
-		System.out.println(simpleGraph.toStringIndex());
+		return graph;
+	}
+	
+    private Graph<Set<String>> simplify(KosarajuSharirSCC scc, Digraph graph, Map<String, Integer> mappings){
+    	int M = scc.count();
+    	List<Set<String>> components = new ArrayList<Set<String>>(M);
+        for(int i=0;i<M;i++) {
+            components.add(new THashSet<String>());
+        }
+        for(Map.Entry<String, Integer> e : mappings.entrySet()){
+        	components.get(scc.id(e.getValue())).add(e.getKey());
+        }
+        
+    	Map<String, Set<String>> belongingComponent = new THashMap<String, Set<String>>();
+    	for(Set<String> component : components){
+            for(String vertex : component){
+                belongingComponent.put(vertex, component);
+            }
+        }
+    	
+    	Map<Integer, String> revMappings = new THashMap<Integer, String>(mappings.size());
+    	for(Map.Entry<String, Integer> e : mappings.entrySet()){
+    		revMappings.put(e.getValue(), e.getKey());
+    	}
+    	Graph<Set<String>> ret = new Graph<Set<String>>();
+    	for(Set<String> component : components){
+            for(String vertex : component){
+                for(int w : graph.adj(mappings.get(vertex))){
+                	if(scc.id(w) != scc.id(mappings.get(vertex))){
+                		ret.addEdge(component, belongingComponent.get(revMappings.get(w)));
+                	}
+                }
+            }
+        }
+    	return ret;
+    }
+	
+	public List<Set<String>> split(Map<String, Set<String>> dependency, Map<String, Set<String>> super2subs, int numRoots){
+		Map<String, Integer> mappings = createMappings(dependency, super2subs);
+		Digraph graph = createGraph(dependency, super2subs, mappings);
+		KosarajuSharirSCC scc = new KosarajuSharirSCC(graph);		
+		Graph<Set<String>> simpleGraph = simplify(scc, graph, mappings);
 		Set<Set<String>> simpleRoots = simpleGraph.getRoots();
+
+		for(Set<String> r : simpleRoots){
+			for(String rr : r){
+				System.out.println("ROOT " + rr);
+			}
+		}
 		System.err.println(simpleRoots.size());
 		
 		//---
@@ -147,5 +189,5 @@ public class Spliter {
 		}
 		return ret;
 		//---
-	}
+	}	
 }

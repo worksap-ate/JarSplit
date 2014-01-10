@@ -41,7 +41,7 @@ public class Main {
             JarEntry e = en.nextElement();
             String name = e.getName();
             if(! e.isDirectory()){
-                ret.add(name.replace(".class", "").replace("/", "."));
+            	ret.add(name.replace(".class", "").replace("/", "."));
             }
         }
         f.close();

@@ -32,6 +32,9 @@ public class MyDB {
 	}
 	
 	private boolean filter(String name){
+		if(true){
+			return true;
+		}
 		if(name.startsWith("java.")){
 			return false;
 		}

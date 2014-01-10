@@ -29,14 +29,14 @@ public class MyClassVisitor extends ClassVisitor {
 		}
 		if(superName != null){
 			L.vvv("MyClassVisitor.visit:superName: " + superName);
-			db.add(superName);
+			// db.add(superName);
 			
 			db.addSuper2Subs(superName, name);
 		}
 		if(interfaces != null){
 			for(String i : interfaces){
 				L.vvv("MyClassVisitor.visit:interfaces: " + i);
-				db.add(i);
+				// db.add(i);
 				
 				db.addSuper2Subs(i, name);
 			}
