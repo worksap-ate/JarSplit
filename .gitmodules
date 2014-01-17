@@ -1,0 +1,3 @@
+[submodule "src/main/java/com/github/cloverrose/jarsplit/scc"]
+	path = src/main/java/com/github/cloverrose/jarsplit/scc
+	url = /home/osari/workspace/StronglyConnectedComponentMVN
