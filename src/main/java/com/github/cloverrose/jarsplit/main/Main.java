@@ -1,4 +1,4 @@
-package main;
+package com.github.cloverrose.jarsplit.main;
 
 import gnu.trove.set.hash.THashSet;
 
@@ -19,7 +19,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
-import split.*;
+import com.github.cloverrose.jarsplit.split.*;
 
 
 

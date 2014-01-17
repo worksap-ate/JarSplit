@@ -1,4 +1,4 @@
-package kmeans;
+package com.github.cloverrose.jarsplit.kmeans;
 
 import java.util.*;
 

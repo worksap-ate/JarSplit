@@ -1,4 +1,4 @@
-package main;
+package com.github.cloverrose.jarsplit.main;
 
 public class L {
 	public static final int ERROR = 5;

@@ -1,4 +1,4 @@
-package main;
+package com.github.cloverrose.jarsplit.main;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
