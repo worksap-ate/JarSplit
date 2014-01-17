@@ -1,4 +1,4 @@
-package main;
+package com.github.cloverrose.jarsplit.main;
 
 import gnu.trove.set.hash.THashSet;
 
@@ -19,7 +19,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
-import split.*;
+import com.github.cloverrose.jarsplit.split.*;
 
 
 
@@ -52,23 +52,14 @@ public class Main {
         return ret;
     }
 
-    private static List<Set<String>> union(List<Set<String>> x){
-        List<Set<String>> ret = new ArrayList<Set<String>>();
-        Set<String> temp = new THashSet<String>();
-        for(Set<String> i : x){
-            temp.addAll(i);
-        }
-        ret.add(temp);
-        return ret;
-    }
-
 	public static void main(String[] args) throws IOException {
-		if(args.length != 1){
-        	throw new RuntimeException(".jar file name is required.");
+		if(args.length != 2){
+        	throw new RuntimeException("[.jar file name] and [number of partitions] are required.");
         }
     	// e.g. cfm.jar or /home/USERNAME/Downloads/cfm.jar
     	String jarName = args[0];
-        System.out.println("target jar: " + jarName);
+        int numPartitions = Integer.parseInt(args[1]);
+        System.out.println("Splits " + jarName + " into " + numPartitions + " jars.");
         
 		long start = System.currentTimeMillis();
 
@@ -100,11 +91,10 @@ public class Main {
         long end_read = System.currentTimeMillis();
         System.err.println("read all .class time: " + (end_read- start) + "[ms]");
         
-        List<Set<String>> modules = new Spliter().split(db.getDependency(), db.getSuper2Subs(), 5);
+        List<Set<String>> modules = new Spliter().split(db.getDependency(), db.getSuper2Subs(), numPartitions);
         for(Set<String> module : modules){
         	fileNames.removeAll(module);
         }
-        modules = union(modules);
         int n = 0;
         int c = 0;
         int t = fileNames.size() / modules.size();
@@ -126,7 +116,7 @@ public class Main {
         Set<String> notContain = new THashSet<String>();
         for(int i=0;i<modules.size();i++){
 			System.out.println("number: " + i);
-	        final File target = new File("jarsample" + i + ".jar");
+	        final File target = new File("splitted" + i + ".jar");
 	        final JarOutputStream jarOutStream = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(target)));
 			try {
 				/* create .class files */

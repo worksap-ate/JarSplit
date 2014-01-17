@@ -1,9 +1,9 @@
-package split;
+package com.github.cloverrose.jarsplit.main;
 
 import java.util.*;
 
-import kmeans.Kmeans;
-import scc.*;
+import com.github.cloverrose.jarsplit.kmeans.Kmeans;
+import com.github.cloverrose.jarsplit.scc.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 

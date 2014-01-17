@@ -1,8 +1,8 @@
-package split;
+package com.github.cloverrose.jarsplit.main;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.*;
-import scc.*;
+import com.github.cloverrose.jarsplit.scc.*;
 
 public class DepthFirstSearch<T> {
 	private void depthfirstsearch(Graph<T> graph, int v, List<Set<Integer>> attrs){
