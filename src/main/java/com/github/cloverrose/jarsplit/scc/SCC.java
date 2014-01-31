@@ -18,19 +18,19 @@ public class SCC<T> {
         num.set(vertex, counter.value);
         S.push(vertex);
         for(Integer w : g.getAdjacentVertexIndices(vertex)){
-            if(num.get(w) == NULL){
+            if(num.get(w).equals(NULL)){
                 visit(g, w, sccs, S, low, num, counter);
                 low.set(vertex, Math.min(low.get(vertex), low.get(w)));
             }else if(S.contains(w)){
                 low.set(vertex, Math.min(low.get(vertex), num.get(w)));
             }
         }
-        if(low.get(vertex) == num.get(vertex)){
+        if(low.get(vertex).equals(num.get(vertex))){
             Set<Integer> newScc = new THashSet<Integer>();
             while(true){
                 Integer w = S.pop();
                 newScc.add(w);
-                if(w == vertex){
+                if(w.equals(vertex)){
                     break;
                 }
             }
@@ -58,7 +58,7 @@ public class SCC<T> {
         Stack<Integer> S = new Stack<Integer>();
         Counter counter = new Counter(0);
         for(Integer v : roots_){
-            if(num.get(v) == NULL){
+            if(num.get(v).equals(NULL)){
                 visit(g, v, sccs, S, low, num, counter);
             }
         }

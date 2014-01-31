@@ -1,4 +1,4 @@
-package com.github.cloverrose.jarsplit.main;
+package com.github.cloverrose.jarsplit.split;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.*;

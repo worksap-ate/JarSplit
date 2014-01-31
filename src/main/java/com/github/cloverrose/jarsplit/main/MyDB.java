@@ -18,7 +18,7 @@ public class MyDB {
     private Set<String> fileNames;
 
     public MyDB(Set<String> fileNames){
-        this.fileNames = fileNames;
+    	this.fileNames = fileNames;
         this.dependency = new THashMap<String, Map<String, Integer>>();
         this.super2subs = new THashMap<String, Set<String>>();
     }
@@ -39,10 +39,10 @@ public class MyDB {
         if(name.startsWith("java.")){
             return false;
         }
-        if(name.startsWith("java.lang.Object")){
+        if(name.startsWith("javax.")){
             return false;
         }
-        if(name.equals("int") ||
+        else if(name.equals("int") ||
            name.equals("double") ||
            name.equals("float") ||
            name.equals("char") ||
@@ -51,9 +51,6 @@ public class MyDB {
            name.equals("int") ||
            name.equals("short") ||
            name.equals("long")){
-            return false;
-        }
-        if(!this.fileNames.contains(name)){
             return false;
         }
        return true;
@@ -92,7 +89,7 @@ public class MyDB {
     }
 
     public void addType(Type type){
-        switch(type.getSort()) {
+    	switch(type.getSort()) {
         case Type.ARRAY:
             String t1 = type.getElementType().getClassName();
             L.vvv("MyClassVisitor.visitField:t1: " + t1);
