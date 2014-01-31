@@ -37,14 +37,14 @@ public class Main {
 		return buffer.toByteArray();
 	}
 
-	private static Set<String> getFileNames(String jarName) throws IOException{
+	private static Set<String> getInternalNames(String jarName) throws IOException{
         Set<String> ret = new THashSet<String>();
         JarFile f = new JarFile(new File(jarName));
         Enumeration<? extends JarEntry> en = f.entries();
         while(en.hasMoreElements()) {
             JarEntry e = en.nextElement();
             String name = e.getName();
-            if(! e.isDirectory()){
+            if(!e.isDirectory() && name.contains(".class")){
                 ret.add(name.replace(".class", "").replace("/", "."));
             }
         }
@@ -63,8 +63,8 @@ public class Main {
         
 		long start = System.currentTimeMillis();
 
-		Set<String> fileNames0 = getFileNames(jarName);
-		MyDB db = new MyDB(fileNames0);
+		Set<String> internalNames = getInternalNames(jarName);
+		MyDB db = new MyDB(internalNames);
 		MyClassVisitor cv = new MyClassVisitor(Opcodes.ASM4, db);
         Map<String, byte[]> files = new HashMap<String, byte[]>();
         Set<String> fileNames = new THashSet<String>();
@@ -93,20 +93,17 @@ public class Main {
         
         List<Set<String>> modules = new Spliter().split(db.getDependency(), db.getSuper2Subs(), numPartitions);
         for(Set<String> module : modules){
-        	fileNames.removeAll(module);
+        	internalNames.removeAll(module);
         }
         int n = 0;
         int c = 0;
-        int t = fileNames.size() / modules.size();
-        for(String fileName : fileNames){
-        	if(!fileName.equals("META-INF/MANIFEST.MF")){
-	        	String className = fileName.replace(".class", "").replace("/", ".");
-	        	modules.get(n).add(className);
-	        	c++;
-	        	if(c > t){
-	        		n++;
-	        		c=0;
-	        	}
+        int t = internalNames.size() / modules.size();
+        for(String className : internalNames){
+        	modules.get(n).add(className);
+        	c++;
+        	if(c > t){
+        		n++;
+        		c=0;
         	}
         }
         
