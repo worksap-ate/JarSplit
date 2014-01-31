@@ -6,16 +6,16 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 public class MyMethodVisitor extends MethodVisitor {
-	private MyDB db;
+    private MyDB db;
 
-	public MyMethodVisitor(int api, MyDB db) {
-		super(api);
-		this.db = db;
-	}
+    public MyMethodVisitor(int api, MyDB db) {
+        super(api);
+        this.db = db;
+    }
 
-	public void visitTypeInsn(int opcode,
+    public void visitTypeInsn(int opcode,
                               String desc) {
-    	db.addDesc(desc);
+        db.addDesc(desc);
     }
 
     public void visitFieldInsn(int opcode,
@@ -32,7 +32,7 @@ public class MyMethodVisitor extends MethodVisitor {
             String desc,
             Handle bsm,
             Object... bsmArgs){
-    	db.addMethodDesc(desc);    	
+        db.addMethodDesc(desc);
     }
 
     public void visitLdcInsn(Object cst) {
@@ -51,13 +51,13 @@ public class MyMethodVisitor extends MethodVisitor {
             String signature,
             Label start,
             Label end,
-            int index){    	
-    	if(signature != null){
-    		L.vvv("MyMethodVisitor:visitLocalVariable:signature: " + signature);
-    		db.addSignatureType(signature, this.api);
-    	}else{
-    		L.vvv("MyMethodVisitor:visitLocalVariable:desc: " + desc);
-    		db.addDesc(desc);
-    	}
+            int index){
+        if(signature != null){
+            L.vvv("MyMethodVisitor:visitLocalVariable:signature: " + signature);
+            db.addSignatureType(signature, this.api);
+        }else{
+            L.vvv("MyMethodVisitor:visitLocalVariable:desc: " + desc);
+            db.addDesc(desc);
+        }
     }
 }

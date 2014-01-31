@@ -70,7 +70,7 @@ public class Graph<T> {
         }
         return ret;
     }
-    
+
     public Set<T> getRoots(){
         Set<Integer> ret = getRootIndices();
         Set<T> ret_ = new THashSet<T>(ret.size());

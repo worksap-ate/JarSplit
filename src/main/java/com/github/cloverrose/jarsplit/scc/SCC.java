@@ -58,9 +58,9 @@ public class SCC<T> {
         Stack<Integer> S = new Stack<Integer>();
         Counter counter = new Counter(0);
         for(Integer v : roots_){
-        	if(num.get(v) == NULL){
-        		visit(g, v, sccs, S, low, num, counter);
-        	}
+            if(num.get(v) == NULL){
+                visit(g, v, sccs, S, low, num, counter);
+            }
         }
         return sccs;
     }
