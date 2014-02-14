@@ -7,7 +7,9 @@ import com.github.cloverrose.jarsplit.scc.*;
 public class DepthFirstSearch<T> {
 	private void depthfirstsearch(Graph<T> graph, int v, List<Set<Integer>> attrs){
 		for(int u : graph.getAdjacentVertexIndices(v)){
-			depthfirstsearch(graph, u, attrs);
+			if(attrs.get(u).size() == 0){
+				depthfirstsearch(graph, u, attrs);
+			}
 			attrs.get(v).addAll(attrs.get(u));
 		}
 		attrs.get(v).add(v);
