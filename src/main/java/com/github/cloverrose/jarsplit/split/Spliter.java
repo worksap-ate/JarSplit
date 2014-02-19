@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.github.cloverrose.jarsplit.kmeans.Kmeans;
 import com.github.cloverrose.jarsplit.scc.*;
+import com.github.cloverrose.jarsplit.partition.*;
+
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
@@ -18,81 +20,55 @@ public class Spliter {
 		}
 	}
 	
-	private void addDummyNode(Graph<String> graph, int numRoots){
-		Set<String> roots = graph.getRoots();
-		int n = roots.size() / numRoots;
-		int c = 0;
-		int i = 0;
-		for(String root : roots){
-			graph.addEdge("DUMMY" + c, root);
-			i++;
-			if(i == n){
-				c++;
-				i=0;
-			}
-		}
-	}
+//	private void addDummyNode(Graph<String> graph, int numRoots){
+//		Set<String> roots = graph.getRoots();
+//		int n = roots.size() / numRoots;
+//		int c = 0;
+//		int i = 0;
+//		for(String root : roots){
+//			graph.addEdge("DUMMY" + c, root);
+//			i++;
+//			if(i == n){
+//				c++;
+//				i=0;
+//			}
+//		}
+//	}
 	
 
-	private void simplifyGraphByFirstChildren(Graph<String> graph, int numRoots){
+	private void partition(Graph<String> graph, int numRoots){
 		Set<Integer> _roots = graph.getRootIndices();
-		Map<Integer, Integer> _children = new THashMap<Integer, Integer>();
+		List<Integer> roots = new ArrayList<Integer>(_roots);
+	    int num = roots.size();
+		
+	    Map<Integer, Integer> _children = new THashMap<Integer, Integer>();
 		for(Integer vertex : _roots){
 			for(Integer child : graph.getAdjacentVertexIndices(vertex)){
-				if(_children.containsKey(child)){
-					_children.put(child, _children.get(child) + 1);
-				}else{
-					_children.put(child, 1);
-				}
+				_children.put(child, _children.containsKey(child) ? _children.get(child) + 1 : 1);
 			}
 		}
-		List<Map.Entry<Integer,Integer>> entries = new ArrayList<Map.Entry<Integer, Integer>>(_children.entrySet());
-		Collections.sort(entries, new Comparator<Map.Entry<Integer, Integer>>() {
-			@Override
-			public int compare(
-					Map.Entry<Integer,Integer> entry1, Map.Entry<Integer,Integer> entry2) {
-	                	return ((Integer)entry2.getValue()).compareTo((Integer)entry1.getValue());
-	            	}
-		});
-	    List<Integer> children = new ArrayList<Integer>(100);
-	    int cc = 0;
-	    for(Map.Entry<Integer, Integer> e : entries){
-	    	if(e.getValue() == 1){
-	    		break;
-	    	}
-	    	children.add(e.getKey());
-	    	cc++;
-	    	if(cc == 100){
-	    		break;
-	    	}
-	    }
-		List<Integer> roots = new ArrayList<Integer>(_roots);
-		// List<Integer> children = new ArrayList<Integer>(_children);
-		int dimension = children.size();
-		int num = roots.size();
+	    List<Integer> children = new ArrayList<Integer>(_children.keySet());
+	    int dimension = children.size();
 		System.out.println("Dimension = " + dimension);
 		System.out.println("Num = " + num);		
-		List<List<Double>> points = new ArrayList<List<Double>>(num);
+		List<List<Integer>> points = new ArrayList<List<Integer>>(num);
 		for(int i=0;i<num;i++){
-			if(i % 1000 == 0){
-				System.out.println(i);
-			}
-			List<Double> point = new ArrayList<Double>(dimension);
+			List<Integer> point = new ArrayList<Integer>(dimension);
 			for(int j=0;j<dimension;j++){
-				point.add(0.0);
+				point.add(0);
 			}
 			for(Integer child : graph.getAdjacentVertexIndices(roots.get(i))){
 				int j = children.indexOf(child);
 				if(j != -1){
-					point.set(j, 1.0);
+					point.set(j, 1);
 				}
 			}
 			points.add(point);
 		}
 		
-		List<Integer> assigns = new Kmeans().start(points, numRoots);
+		List<Integer> assigns = new Partition().start2(points, numRoots);
+		System.out.println(assigns);
 
-		
 		for(int i=0; i<numRoots; i++){
 			for(int j=0;j<assigns.size();j++){
 				int assign = assigns.get(j);
@@ -102,6 +78,75 @@ public class Spliter {
 			}
 		}
 	}
+	
+//	private void simplifyGraphByFirstChildren(Graph<String> graph, int numRoots){
+//		Set<Integer> _roots = graph.getRootIndices();
+//		Map<Integer, Integer> _children = new THashMap<Integer, Integer>();
+//		for(Integer vertex : _roots){
+//			for(Integer child : graph.getAdjacentVertexIndices(vertex)){
+//				if(_children.containsKey(child)){
+//					_children.put(child, _children.get(child) + 1);
+//				}else{
+//					_children.put(child, 1);
+//				}
+//			}
+//		}
+//		List<Map.Entry<Integer,Integer>> entries = new ArrayList<Map.Entry<Integer, Integer>>(_children.entrySet());
+//		Collections.sort(entries, new Comparator<Map.Entry<Integer, Integer>>() {
+//			@Override
+//			public int compare(
+//					Map.Entry<Integer,Integer> entry1, Map.Entry<Integer,Integer> entry2) {
+//	                	return ((Integer)entry2.getValue()).compareTo((Integer)entry1.getValue());
+//	            	}
+//		});
+//	    List<Integer> children = new ArrayList<Integer>(100);
+//	    int cc = 0;
+//	    for(Map.Entry<Integer, Integer> e : entries){
+//	    	if(e.getValue() == 1){
+//	    		break;
+//	    	}
+//	    	children.add(e.getKey());
+//	    	cc++;
+//	    	if(cc == 100){
+//	    		break;
+//	    	}
+//	    }
+//		List<Integer> roots = new ArrayList<Integer>(_roots);
+//		// List<Integer> children = new ArrayList<Integer>(_children);
+//		int dimension = children.size();
+//		int num = roots.size();
+//		System.out.println("Dimension = " + dimension);
+//		System.out.println("Num = " + num);		
+//		List<List<Double>> points = new ArrayList<List<Double>>(num);
+//		for(int i=0;i<num;i++){
+//			if(i % 1000 == 0){
+//				System.out.println(i);
+//			}
+//			List<Double> point = new ArrayList<Double>(dimension);
+//			for(int j=0;j<dimension;j++){
+//				point.add(0.0);
+//			}
+//			for(Integer child : graph.getAdjacentVertexIndices(roots.get(i))){
+//				int j = children.indexOf(child);
+//				if(j != -1){
+//					point.set(j, 1.0);
+//				}
+//			}
+//			points.add(point);
+//		}
+//		
+//		List<Integer> assigns = new Kmeans().start(points, numRoots);
+//
+//		
+//		for(int i=0; i<numRoots; i++){
+//			for(int j=0;j<assigns.size();j++){
+//				int assign = assigns.get(j);
+//				if(assign == i){
+//					graph.addEdge("DUMMY" + i, graph.fromIndex(roots.get(j)));
+//				}
+//			}
+//		}
+//	}
 
 
 	
@@ -144,7 +189,8 @@ public class Spliter {
 		System.out.println("VERTEX NUM " + graph.getVertexes().size());
 		
 		// simplifyGraphByFirstChildren(graph, numRoots);
-		addDummyNode(graph, numRoots);
+		// addDummyNode(graph, numRoots);
+		partition(graph, numRoots);
 		List<Set<String>> ret = new DFS().dfs(graph, graph.getRoots());
 		
 //		Graph<Set<String>> simpleGraph = new Simplifier<String>().simplify(graph, roots);
