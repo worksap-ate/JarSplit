@@ -1,6 +1,8 @@
 JarSplit
 ========
 
+[![Build Status](https://travis-ci.org/worksap-ate/JarSplit.png?branch=master)](https://travis-ci.org/worksap-ate/JarSplit)
+
 Build
 ------
 ```
