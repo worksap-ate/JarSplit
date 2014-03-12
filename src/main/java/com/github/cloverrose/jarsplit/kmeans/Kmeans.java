@@ -101,6 +101,7 @@ public class Kmeans {
 		centroids.add(copy(points.get(random_index)));
 		
 		for(int i=1;i<k;i++){
+			System.out.println("i = " + i);
 			List<Double> distances = new ArrayList<Double>();
 			for(List<Double> p : points){
 				distances.add(calcDistanceBetweenNearestCentroidDistance(p, centroids));
@@ -111,6 +112,8 @@ public class Kmeans {
 			}
 			
 			for(int j=0;j<distances.size();j++){
+				System.out.println("i = " + i + ", j = " + j);
+				
 				double distance = distances.get(j);
 				sum_distance -= distance;
 				if(sum_distance <= 0){
@@ -139,6 +142,9 @@ public class Kmeans {
 		System.out.println("num: " + points.size());
 		
 		for(int count=0;;count++){
+			if(count % 1000 == 0){
+				System.out.println("count = " + count);
+			}
 			List<Integer> prev_assigns = assigns;
 			
 			for(int i=0;i<k;i++){
